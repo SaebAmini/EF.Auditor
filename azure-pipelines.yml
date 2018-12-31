@@ -1,14 +1,34 @@
+name: $(Date:yyyyMMdd)$(Rev:r)
+
 pool:
   vmImage: 'Ubuntu 16.04'
-  
+
 variables:
   buildConfiguration: 'Release'
+  versionMajor: 1
+  versionMinor: 0
+  versionPatch: 0
 
 steps:
-- script: |
+- powershell: |
+    Write-Host '##vso[task.setvariable variable=semanticVersion]$(versionMajor).$(versionMinor).$(versionPatch)'
+    Write-Host '##vso[task.setvariable variable=assemblyVersion]$(versionMajor).0.0'
+    $commitId = '$(Build.SourceVersion)'.Substring(0,7)
+    Write-Host "##vso[task.setvariable variable=commitId]$commitId"
+  name: SetVariables
+
+- powershell: |
+    Write-Host 'semanticVersion: $(semanticVersion)'
+    Write-Host 'assemblyVersion: $(assemblyVersion)'
+    Write-Host 'commitId: $(commitId)'
+  name: PrintVariables
+
+- powershell: |
     dotnet build --configuration $(buildConfiguration)
     dotnet test --configuration $(buildConfiguration) --logger trx
-    dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
+    dotnet pack --configuration Release /p:AssemblyVersion='$(assemblyVersion)' /p:FileVersion='$(semanticVersion)' /p:InformationalVersion='$(semanticVersion).$(Build.BuildNumber)+$(commitId)' --output '$(Build.ArtifactStagingDirectory)'
+  name: BuildTestAndPack
+
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:

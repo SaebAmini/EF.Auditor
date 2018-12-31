@@ -1,14 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Authors>Saeb Amini</Authors>
+    <Description>EF.Auditor is a simple and lightweight auditing library for Entity Framework Core.</Description>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0.0</InformationalVersion>
+    <PackageTags>Audit;Auditing;AuditLogs;EF;EntityFramework;EntityFrameworkCore;EFCore;</PackageTags>
+    <PackageProjectUrl>https://github.com/SaebAmini/EF.Auditor</PackageProjectUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <NoWarn>1701;1702;1591</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />

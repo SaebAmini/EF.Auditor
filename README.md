@@ -1,4 +1,6 @@
+[![NuGet version (EF.Auditor)](https://img.shields.io/nuget/v/EF.Auditor.svg?style=flat)](https://www.nuget.org/packages/EF.Auditor)
 [![Build Status](https://dev.azure.com/saebamini/Personal/_apis/build/status/EF.Auditor?branchName=master)](https://dev.azure.com/saebamini/Personal/_build/latest?definitionId=1?branchName=master)
+
 
 EF.Auditor is a simple and lightweight library that piggybacks on top of **Entity Framework Core**'s internal ChangeTracker to give you auditing information about added, deleted and modified entities.
 
