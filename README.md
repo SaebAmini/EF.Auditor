@@ -70,11 +70,11 @@ If you prefer to use it like that, it's best to set this up with your favourite 
 There are two formats in which the `ChangeSnapshot` can be generated: `Inline` (default) and `Bifurcate` which can be specified as an argument when calling `GetLogs`:
 
 ```csharp
-var auditLogs = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Inline)
+var auditLogs = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Inline)
 
 // or
 
-var auditLogs = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate)
+var auditLogs = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate)
 ```
 
 The difference is that with `Bifurcate`, before and after entity property values are in separate top-level "Before" and "After" trees which follow the same schema as the entity, whereas with `Inline`, each entity property will have inline "Before" and "After" keys which hold respective values for the property.
@@ -124,7 +124,7 @@ dbContext.Add(author);
 dbContext.SaveChanges();
 author.FirstName = "Kaiser";
 
-var auditLogsBifurcate = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate);
+var auditLogsBifurcate = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate);
 
 Console.WriteLine(auditLogsBifurcate.Single().ChangeSnapshot);
 
@@ -139,7 +139,7 @@ Console.WriteLine(auditLogsBifurcate.Single().ChangeSnapshot);
 }
 */
 
-var auditLogsInline = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Inline);
+var auditLogsInline = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Inline);
 
 Console.WriteLine(auditLogsInline.Single().ChangeSnapshot);
 
@@ -160,7 +160,7 @@ dbContext.Add(author);
 dbContext.SaveChanges();
 author.Thoughts.Single().Description = "Ommmmmmmmmm";
 
-var auditLogsBifurcate = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate);
+var auditLogsBifurcate = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Bifurcate);
 
 Console.WriteLine(auditLogsBifurcate.Single().ChangeSnapshot);
 
@@ -185,7 +185,7 @@ Console.WriteLine(auditLogsBifurcate.Single().ChangeSnapshot);
 }
 */
 
-var auditLogsInline = Audit.GetLogs<TestAggregateRootBase>(dbContext, ChangeSnapshotType.Inline);
+var auditLogsInline = Audit.GetLogs<AggregateRootBase>(dbContext, ChangeSnapshotType.Inline);
 
 Console.WriteLine(auditLogsInline.Single().ChangeSnapshot);
 
