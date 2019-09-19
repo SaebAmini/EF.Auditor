@@ -1,38 +1,59 @@
 name: $(Date:yyyyMMdd)$(Rev:r)
 
-pool:
-  vmImage: 'Ubuntu 16.04'
+stages:
 
-variables:
-  buildConfiguration: 'Release'
-  versionMajor: 1
-  versionMinor: 0
-  versionPatch: 1
+- stage: Build
+  jobs:
+  - job: BuildTestAndPack
+    pool:
+      vmImage: 'Ubuntu 16.04'
 
-steps:
-- powershell: |
-    Write-Host '##vso[task.setvariable variable=semanticVersion]$(versionMajor).$(versionMinor).$(versionPatch)'
-    Write-Host '##vso[task.setvariable variable=assemblyVersion]$(versionMajor).0.0'
-    $commitId = '$(Build.SourceVersion)'.Substring(0,7)
-    Write-Host "##vso[task.setvariable variable=commitId]$commitId"
-  name: SetVariables
+    variables:
+      buildConfiguration: 'Release'
+      versionMajor: 1
+      versionMinor: 0
+      versionPatch: 1
 
-- powershell: |
-    Write-Host 'semanticVersion: $(semanticVersion)'
-    Write-Host 'assemblyVersion: $(assemblyVersion)'
-    Write-Host 'commitId: $(commitId)'
-  name: PrintVariables
+    steps:
+    - powershell: |
+        $mainVersion = "$(versionMajor).$(versionMinor).$(versionPatch)"
+        $commitId = "$(Build.SourceVersion)".Substring(0,7)
+        Write-Host "##vso[task.setvariable variable=mainVersion]$mainVersion"
+        Write-Host "##vso[task.setvariable variable=semanticVersion]$mainVersion.$(Build.BuildNumber)+$commitId"
+        Write-Host "##vso[task.setvariable variable=assemblyVersion]$(versionMajor).0.0"
+      name: SetVariables
 
-- powershell: |
-    dotnet build --configuration $(buildConfiguration)
-    dotnet test --configuration $(buildConfiguration) --logger trx
-    dotnet pack --configuration Release /p:AssemblyVersion='$(assemblyVersion)' /p:FileVersion='$(semanticVersion)' /p:InformationalVersion='$(semanticVersion).$(Build.BuildNumber)+$(commitId)' --output '$(Build.ArtifactStagingDirectory)'
-  name: BuildTestAndPack
+    - powershell: |
+        Write-Host 'mainVersion: $(mainVersion)'
+        Write-Host 'semanticVersion: $(semanticVersion)'
+        Write-Host 'assemblyVersion: $(assemblyVersion)'
+      name: PrintVariables
 
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+    - powershell: |
+        dotnet build --configuration $(buildConfiguration)
+        dotnet test --configuration $(buildConfiguration) --logger trx
+        dotnet pack --configuration Release /p:AssemblyVersion='$(assemblyVersion)' /p:FileVersion='$(mainVersion)' /p:InformationalVersion='$(semanticVersion)' /p:Version='$(semanticVersion)' --output '$(Build.ArtifactStagingDirectory)'
+      name: BuildTestAndPack
 
-- task: PublishBuildArtifacts@1
+    - task: PublishTestResults@2
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: VSTest
+        testResultsFiles: '**/*.trx'
+
+    - task: PublishBuildArtifacts@1
+
+- stage: ReleaseNugetPackage
+  jobs:
+  - deployment: ReleaseNugetPackage
+    environment: NuGet
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: NuGetCommand@2
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
+              nuGetFeedType: 'external'
+              publishFeedCredentials: 'NuGet.org'

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Authors>Saeb Amini</Authors>
-    <Description>EF.Auditor is a simple and lightweight auditing library for Entity Framework Core.</Description>
+    <Description>EF.Auditor is a simple and lightweight auditing library for Entity Framework Core that supports Domain Driven Design..</Description>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <InformationalVersion>1.0.0.0</InformationalVersion>
