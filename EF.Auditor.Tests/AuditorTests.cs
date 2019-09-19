@@ -8,8 +8,8 @@ namespace EF.Auditor.Tests
 {
     public class AuditorTests
     {
-        AuditorTestsContext _context;
-        IAuditor _auditor;
+        readonly AuditorTestsContext _context;
+        readonly IAuditor _auditor;
 
         public AuditorTests()
         {
