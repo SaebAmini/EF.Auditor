@@ -74,7 +74,7 @@ namespace EF.Auditor
                 {
                     bool hasChanged = entry.State.IsChanged();
                     if (!hasChanged) continue;
-                    string changeSnapshotJson = GetChangeSnapshot(dbContext, entry, changeSnapshotType, changeSnapshotJsonFormatting);
+                    string changeSnapshotJson = GetChangeSnapshot(entry, changeSnapshotType, changeSnapshotJsonFormatting);
                     logs.Add(new AuditLog
                     (
                         entry.Entity,
@@ -105,17 +105,17 @@ namespace EF.Auditor
             }
         }
 
-        private static string GetChangeSnapshot(DbContext dbContext, EntityEntry entry, ChangeSnapshotType changeSnapshotType, Formatting jsonFormatting)
+        private static string GetChangeSnapshot(EntityEntry entry, ChangeSnapshotType changeSnapshotType, Formatting jsonFormatting)
         {
             switch (changeSnapshotType)
             {
                 default:
                 case ChangeSnapshotType.Bifurcate:
-                    var (Before, After) = GetShallowChangesBifurcate(dbContext, entry);
+                    var (Before, After) = GetShallowChangesBifurcate(entry);
                     var deepChangeSnapshot = new { Before, After };
                     return JsonConvert.SerializeObject(deepChangeSnapshot, jsonFormatting);
                 case ChangeSnapshotType.Inline:
-                    var inlineChanges = GetShallowChangesInline(dbContext, entry);
+                    var inlineChanges = GetShallowChangesInline(entry);
                     return JsonConvert.SerializeObject(inlineChanges, jsonFormatting);
             }
         }
@@ -163,7 +163,7 @@ namespace EF.Auditor
             return changes;
         }
 
-        private static Dictionary<string, object> GetShallowChangesInline(DbContext dbContext, EntityEntry entry)
+        private static Dictionary<string, object> GetShallowChangesInline(EntityEntry entry)
         {
             var changes = new Dictionary<string, object>();
             var props = entry.Properties.Where(p => !p.IsTemporary && !p.Metadata.IsPrimaryKey());
@@ -249,7 +249,7 @@ namespace EF.Auditor
             return (beforeParent, afterParent);
         }
 
-        private static (Dictionary<string, object> Before, Dictionary<string, object> After) GetShallowChangesBifurcate(DbContext dbContext, EntityEntry entry)
+        private static (Dictionary<string, object> Before, Dictionary<string, object> After) GetShallowChangesBifurcate(EntityEntry entry)
         {
             var beforeParent = new Dictionary<string, object>();
             var afterParent = new Dictionary<string, object>();

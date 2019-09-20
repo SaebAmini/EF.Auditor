@@ -12,7 +12,7 @@ stages:
       buildConfiguration: 'Release'
       versionMajor: 1
       versionMinor: 1
-      versionPatch: 4
+      versionPatch: 5
 
     steps:
     - powershell: |
