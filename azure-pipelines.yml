@@ -11,7 +11,7 @@ stages:
     variables:
       buildConfiguration: 'Release'
       versionMajor: 1
-      versionMinor: 0
+      versionMinor: 1
       versionPatch: 4
 
     steps:
