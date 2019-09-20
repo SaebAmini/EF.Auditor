@@ -12,14 +12,14 @@ stages:
       buildConfiguration: 'Release'
       versionMajor: 1
       versionMinor: 0
-      versionPatch: 2
+      versionPatch: 3
 
     steps:
     - powershell: |
         $mainVersion = "$(versionMajor).$(versionMinor).$(versionPatch)"
         $commitId = "$(Build.SourceVersion)".Substring(0,7)
         Write-Host "##vso[task.setvariable variable=mainVersion]$mainVersion"
-        Write-Host "##vso[task.setvariable variable=semanticVersion]$mainVersion.$(Build.BuildNumber)+$commitId"
+        Write-Host "##vso[task.setvariable variable=semanticVersion]$mainVersion+$(Build.BuildNumber).$commitId"
         Write-Host "##vso[task.setvariable variable=assemblyVersion]$(versionMajor).0.0"
       name: SetVariables
 
