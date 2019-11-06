@@ -51,9 +51,8 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: NuGetCommand@2
-            inputs:
-              command: 'push'
-              packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
-              nuGetFeedType: 'external'
-              publishFeedCredentials: 'NuGet.org'
+          - task: NuGetToolInstaller@1
+            displayName: 'Install NuGet'
+            
+          - script: nuget push '$(Pipeline.Workspace)/**/*.nupkg' -s 'https://api.nuget.org/v3/index.json' -ApiKey '$(nuget.apikey)' -SkipDuplicate -NoSymbols
+            displayName: 'Push to NuGet.org'
